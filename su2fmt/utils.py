@@ -17,12 +17,13 @@ def generate_rgb_values(n_colors, is_grayscale=False):
     colors=[]
     for i in np.arange(0., 360., 360. / n_colors):
         hue = i/360.
-        lightness = (50 + np.random.rand() * 10)/100.
-        saturation = (90 + np.random.rand() * 10)/100.
         if is_grayscale:
-            val = random.uniform(0.5, 1)
-            rgb_values = [val,val,val]
+            min_rgb = 0.5
+            rgb = (1 - min_rgb)*hue + min_rgb
+            rgb_values = [rgb,rgb,rgb]
         else:
+            lightness = (50 + np.random.rand() * 10)/100.
+            saturation = (90 + np.random.rand() * 10)/100.
             rgb_values = list(colorsys.hls_to_rgb(hue, lightness, saturation))
 
         colors.append(rgb_values)
