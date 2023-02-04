@@ -29,13 +29,16 @@ pip install git+https://github.com/Turbodesigner/su2fmt.git#egg=su2fmt
 See more examples in [examples](/examples) directory
 
 ```python
-from su2fmt import Mesh, visualize_mesh
+from su2fmt import parse_mesh, visualize_mesh, generate_mesh
 
 # parses mesh file
-mesh = Mesh.from_file("airfoil.su2")
+mesh = parse_mesh("example.su2")
 
 # visualize mesh
 visualize_mesh(mesh)
+
+# generate mesh file
+generate_mesh(mesh, "example_generated.su2")
 ```
 
 ![Airfoil](./assets/airfoil.png)
