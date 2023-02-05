@@ -2,7 +2,7 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import numpy.typing as npt
 from su2fmt.mesh import ElementType, Mesh, Zone 
-
+import dataclasses
 
 def parse_mesh(file_path: str):
     with open(file_path, 'r') as file:
@@ -115,6 +115,11 @@ def parse_mesh(file_path: str):
 
 def combine_meshes(meshes: List[Mesh]):
     zones: List[Zone] = []
+    izone = 1
     for mesh in meshes:
-        zones += mesh.zones
+        for zone in mesh.zones:
+            zone_copy = dataclasses.replace(zone)
+            zone_copy.izone = izone
+            zones.append(zone_copy)
+            izone += 1
     return Mesh(nzone=len(zones), zones=zones)
