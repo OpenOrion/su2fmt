@@ -1,21 +1,36 @@
-from su2fmt.parser import Mesh
+from typing import List, Union
+from su2fmt.parser import Mesh, combine_meshes
 from su2fmt.utils import generate_color_legend_html, generate_rgb_values, to_rgb_str
 import pythreejs
 from IPython.display import display
 from IPython.core.display import HTML
+import ipywidgets as widgets
+import numpy as np
 
 
-def visualize_mesh(mesh: Mesh, view_width=800, view_height=600):
+
+def visualize_mesh(meshes: Union[Mesh, List[Mesh]], view_width=800, view_height=600):
+    coord_html = widgets.HTML("Coords: ()")
+    def on_surf_mousemove(change):
+        # write coordinates to html container
+        if change.new is None:
+            coord_html.value = "Coords: ()"
+        else:
+            coord_html.value = "Coords: (%f, %f, %f)" % change.owner.point
+
+    combined_mesh = combine_meshes(meshes) if isinstance(meshes, list) else meshes
+
     # Legend Colors
-    zone_colors = generate_rgb_values(mesh.nzone, is_grayscale=True)
-    marker_colors = generate_rgb_values(sum([zone.nmark for zone in mesh.zones]))
+    zone_colors = generate_rgb_values(combined_mesh.nzone, is_grayscale=True)
+    marker_colors = generate_rgb_values(sum([zone.nmark for zone in combined_mesh.zones]))
 
     # Legend Color Labels
     marker_color_labels = {}
     zone_color_labels = {}
 
     zone_line_segements = []
-    for i, zone in enumerate(mesh.zones):
+    zone_meshes = []
+    for i, zone in enumerate(combined_mesh.zones):
         zone_color = zone_colors[i]
         zone_color_labels[f"Zone {zone.izone}"] = zone_color
 
@@ -57,20 +72,44 @@ def visualize_mesh(mesh: Mesh, view_width=800, view_height=600):
         zone_line_segements.append(non_marker_lines)
         zone_line_segements.append(marker_lines)
 
+        zone_mesh_geom = pythreejs.BufferGeometry(attributes=dict(
+            position=pythreejs.BufferAttribute(zone.points, normalized=False),
+            index=pythreejs.BufferAttribute(np.concatenate(zone.elements), normalized=False),
+        ))
+
+        zone_mesh = pythreejs.Mesh(
+            geometry=zone_mesh_geom,
+            material=pythreejs.MeshLambertMaterial(color='white', side='DoubleSide'),
+        )
+        zone_meshes.append(zone_mesh)
+
+
     camera = pythreejs.PerspectiveCamera(position=[0, 0, 1], far=1000, near=0.001, aspect=view_width/view_height)
-    scene = pythreejs.Scene(children=zone_line_segements, background="black")
+    scene = pythreejs.Scene(children=zone_line_segements+zone_meshes, background="black")
+
+    orbit_controls = pythreejs.OrbitControls(controlling=camera)
+    
+    pickable_objects = pythreejs.Group()
+    for zone_mesh in zone_meshes:
+        pickable_objects.add(zone_mesh)
+
+    mousemove_picker = pythreejs.Picker(
+        controlling = pickable_objects,
+        event = 'mousemove'
+    )
+    mousemove_picker.observe(on_surf_mousemove, names=['faceIndex'])
 
     renderer = pythreejs.Renderer(
         camera=camera,
         scene=scene,
-        controls=[pythreejs.OrbitControls(controlling=camera)],
+        controls=[orbit_controls, mousemove_picker],
         width=view_width,
         height=view_height
     )
 
     # Plot renderer
-    display(renderer)
-
+    display(coord_html, renderer)
+    
     # Plot legend
     marker_legend_html = generate_color_legend_html("Markers", marker_color_labels)
     zone_legend_html = generate_color_legend_html("Zones", zone_color_labels)

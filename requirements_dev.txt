@@ -1,5 +1,4 @@
 pythreejs
-ipywidgets>=7.6
-jupyterlab
+ipywidgets==7.6
 numpy
 
