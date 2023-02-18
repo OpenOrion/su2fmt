@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional
 import numpy as np
 import numpy.typing as npt
 from enum import Enum
@@ -26,23 +26,21 @@ class Marker:
 class Zone:
     izone: int
     ndime: int
-    nelem: int
-    npoin: int
-    nmark: int
     elements: List[npt.NDArray[np.uint16]]
     element_types: List[ElementType]
-    points: npt.NDArray[np.float32]
-    marker_elements_to_tag: Dict[Tuple[int, int], str]
+    points: npt.NDArray[np.float64]
+    markers: Dict[str, List[npt.NDArray[np.uint16]]] = {}
+    nelem: Optional[int] = None
+    npoin: Optional[int] = None
+    nmark: Optional[int] = None
 
-    @property
-    def markers(self):
-        marker_tag_to_elements: Dict[str, List[npt.NDArray[np.uint16]]] = {}
-        for (elements, tag) in self.marker_elements_to_tag.items():
-            if tag not in marker_tag_to_elements:
-                marker_tag_to_elements[tag] = []
-            marker_tag_to_elements[tag].append(np.array(elements))
-        return [Marker(tag, len(elements), np.array(elements)) for (tag, elements) in marker_tag_to_elements.items()]
-
+    def __post_init__(self) -> None:
+        if self.nelem is None:
+            self.nelem = len(self.elements)
+            self.npoin = len(self.points)
+            self.nmark = len(self.markers)
+        
+            
 
 @dataclass
 class Mesh:
