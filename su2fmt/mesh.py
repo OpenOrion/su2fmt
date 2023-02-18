@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 import numpy as np
 import numpy.typing as npt
 from enum import Enum
-
+import dataclasses
 
 class ElementType(Enum):
     LINE = 3
@@ -14,14 +14,6 @@ class ElementType(Enum):
     PRISM = 13
     PYRAMID = 14
 
-
-@dataclass
-class Marker:
-    tag: str
-    nelem: int
-    elements: npt.NDArray[np.uint16]
-
-
 @dataclass
 class Zone:
     izone: int
@@ -29,7 +21,7 @@ class Zone:
     elements: List[npt.NDArray[np.uint16]]
     element_types: List[ElementType]
     points: npt.NDArray[np.float64]
-    markers: Dict[str, List[npt.NDArray[np.uint16]]] = {}
+    markers: Dict[str, List[npt.NDArray[np.uint16]]] = dataclasses.field(default_factory=dict)
     nelem: Optional[int] = None
     npoin: Optional[int] = None
     nmark: Optional[int] = None
