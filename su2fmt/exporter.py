@@ -3,7 +3,7 @@ from su2fmt.mesh import Mesh, Zone
 
 ELEMENT_INDENT = " " * 2
 
-def generate_mesh(mesh: Mesh, file_path: str):
+def export_mesh(mesh: Mesh, file_path: str):
     with open(file_path, 'w+') as file:
         if mesh.nzone > 1:
             file.write(f"NZONE= {mesh.nzone}\n")
@@ -23,9 +23,9 @@ def generate_mesh(mesh: Mesh, file_path: str):
                 file.write(f"{ELEMENT_INDENT}{spaces.join(map(str, element_row))}\n")
 
             file.write(f"NMARK= {zone.nmark}\n")
-            for marker in zone.markers:
-                file.write(f"MARKER_TAG={marker.tag}\n")
-                file.write(f"MARKER_ELEMS= {marker.nelem}\n")
-                for index, element in enumerate(marker.elements):
+            for marker_tag, marker_elements in zone.markers.items():
+                file.write(f"MARKER_TAG={marker_tag}\n")
+                file.write(f"MARKER_ELEMS= {len(marker_elements)}\n")
+                for index, element in enumerate(marker_elements):
                     element_row = [3, *element]
                     file.write(f"{ELEMENT_INDENT}{spaces.join(map(str, element_row))}\n")

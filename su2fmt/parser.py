@@ -17,7 +17,7 @@ def parse_mesh(file_path: str):
         points: List[npt.NDArray[np.float32]] = []
         elements: List[npt.NDArray[np.uint16]] = []
         element_types: List[ElementType]  = []
-        marker_elements_to_label: Dict[Tuple[int, int], str] = {}
+        markers: Dict[str, List[npt.NDArray[np.uint16]]] = {}
         
         element_index: Optional[int] = None
         point_index: Optional[int] = None
@@ -41,7 +41,7 @@ def parse_mesh(file_path: str):
                     assert ndime is not None, "NDIME must be defined for zone"
                     assert nelem is not None, "NELEM must be defined for zone"
                     assert npoin is not None, "NPOIN must be defined for zone"
-                    zone = Zone(izone-1, ndime, nelem, npoin, nmark, elements, element_types, np.array(points), marker_elements_to_label)
+                    zone = Zone(izone-1, ndime, elements, element_types, np.array(points), markers, nelem, npoin, nmark)
                     zones.append(zone)
                 ndime = int(line.split('=')[1])
                 nelem = None
@@ -49,7 +49,7 @@ def parse_mesh(file_path: str):
                 elements = []
                 element_types = []
                 points = []
-                marker_elements_to_label = {}
+                markers = {}
                 element_index = None
                 point_index = None
                 marker_tag = None
@@ -97,9 +97,15 @@ def parse_mesh(file_path: str):
 
             elif marker_index is not None:
                 assert nmark_elems is not None, "MARKER_ELEMS must be defined for zone before reading markers"
-                marker_elements = np.array(line.split()[1:], dtype=np.uint16)
+                
                 assert marker_tag is not None, "MARKER_TAG must be defined for marker before reading marker elements"
-                marker_elements_to_label[(marker_elements[0], marker_elements[1])] = marker_tag
+                if marker_tag not in markers:
+                    markers[marker_tag] = []
+                
+                markers[marker_tag].append(
+                    np.array(line.split()[1:], dtype=np.uint16)
+                )
+
                 if marker_index == nmark_elems - 1:
                     marker_index = None
                 else:
@@ -108,7 +114,7 @@ def parse_mesh(file_path: str):
         assert ndime is not None, "NDIME must be defined for zone"
         assert nelem is not None, "NELEM must be defined for zone"
         assert npoin is not None, "NPOIN must be defined for zone"
-        zone = Zone(izone, ndime, nelem, npoin, nmark, elements, element_types, np.array(points), marker_elements_to_label)
+        zone = Zone(izone, ndime, elements, element_types, np.array(points), markers, nelem, npoin, nmark)
         zones.append(zone)
 
         return Mesh(nzone, zones)
