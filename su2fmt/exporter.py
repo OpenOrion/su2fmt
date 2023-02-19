@@ -1,5 +1,4 @@
-from typing import List
-from su2fmt.mesh import Mesh, Zone
+from su2fmt.mesh import Mesh
 
 ELEMENT_INDENT = " " * 2
 

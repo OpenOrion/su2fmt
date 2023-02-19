@@ -1,4 +1,2 @@
-pythreejs
-ipywidgets==7.6
 numpy
 
