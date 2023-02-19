@@ -11,7 +11,5 @@ setup(
    packages=['su2fmt'],
    install_requires=[
     "numpy",
-    "pythreejs",
-    "ipywidgets==7.6"
    ]
 )
