@@ -1,6 +1,17 @@
+import numpy.typing as npt
+from typing import List
+import numpy as np
 from su2fmt.mesh import Mesh
 
 ELEMENT_INDENT = " " * 2
+
+def get_unused_point_indexes(points: npt.NDArray[np.float64], elements: List[npt.NDArray[np.uint16]]):
+    used_point_indexes = set()
+    point_indexes = set(range(len(points)))
+    for element in elements:
+        for point_index in element:
+            used_point_indexes.add(point_index)
+    return point_indexes.difference(used_point_indexes)
 
 def export_mesh(mesh: Mesh, file_path: str):
     with open(file_path, 'w+') as file:
@@ -8,11 +19,14 @@ def export_mesh(mesh: Mesh, file_path: str):
             file.write(f"NZONE= {mesh.nzone}\n")
         spaces = " " * 8
         for zone in mesh.zones:
+            unused_point_indexes = get_unused_point_indexes(zone.points, zone.elements)
             if mesh.nzone > 1:
                 file.write(f"IZONE= {zone.izone}\n")
             file.write(f"NDIME= {zone.ndime}\n")
-            file.write(f"NPOIN= {zone.npoin}\n")
+            file.write(f"NPOIN= {zone.npoin-len(unused_point_indexes)}\n")
             for index, point in enumerate(zone.points):
+                if index in unused_point_indexes:
+                    continue
                 point_row = [*(point[:-1] if zone.ndime == 2 else point), index]
                 file.write(f"{spaces}{spaces.join(map(str, point_row))}\n")
 
