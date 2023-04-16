@@ -9,7 +9,7 @@ def parse_mesh(file_path: str):
         zones = []
         nzone: int = 1
 
-        izone: int = 1
+        izone: int = 0
         ndime: Optional[int] = None
         nelem: Optional[int] = None
         npoin: Optional[int] = None
@@ -37,7 +37,7 @@ def parse_mesh(file_path: str):
                 izone = int(line.split('=')[1])
             
             elif line.startswith('NDIME='):
-                if izone > 1:
+                if izone > 0:
                     assert ndime is not None, "NDIME must be defined for zone"
                     assert nelem is not None, "NELEM must be defined for zone"
                     assert npoin is not None, "NPOIN must be defined for zone"
