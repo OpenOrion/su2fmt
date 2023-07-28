@@ -75,8 +75,26 @@ def parse_mesh(file_path: str):
 
             elif element_index is not None:
                 assert nelem is not None, "NELEM must be defined for zone before reading elements"
-                element = np.array(line.split()[1:-1], dtype=np.uint16)
                 element_type = ElementType(int(line.split()[0]))
+                size_limit = 2
+                match element_type:
+                    case ElementType.LINE:
+                        size_limit = 2
+                    case ElementType.TRIANGLE:
+                        size_limit = 3
+                    case ElementType.QUADRILATERAL:
+                        size_limit = 4
+                    case ElementType.TETRAHEDRAL:
+                        size_limit = 4
+                    # TODO: Please verify these!
+                    case ElementType.HEXAHEDRAL:
+                        size_limit = 8
+                    case ElementType.PRISM:
+                        size_limit = 6
+                    case ElementType.PYRAMID:
+                        size_limit = 5
+
+                element = np.array(line.split()[1:size_limit+1], dtype=np.uint16)
                 elements.append(element)
                 element_types.append(element_type)
                 if element_index == nelem-1:
@@ -86,16 +104,18 @@ def parse_mesh(file_path: str):
 
             elif point_index is not None:
                 assert npoin is not None, "NPOIN must be defined for zone before reading points"
+                
+                sp = line.split()[:2 if ndime == 2 else 3]
+
                 if ndime == 2:
-                    point = np.array(line.split()[:-1]+[0], dtype=np.float32)
-                else:
-                    point = np.array(line.split()[:-1], dtype=np.float32)
-                points.append(point)
+                    sp += [0]
+
+                points.append(np.array(sp, dtype=np.float32))
+
                 if point_index == npoin-1:
                     point_index = None
                 else:
                     point_index += 1
-
 
             elif marker_index is not None:
                 assert nmark_elems is not None, "MARKER_ELEMS must be defined for zone before reading markers"
