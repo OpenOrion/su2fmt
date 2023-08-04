@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Sequence, Optional
 import numpy as np
 import numpy.typing as npt
 from enum import Enum
@@ -9,8 +9,8 @@ class ElementType(Enum):
     LINE = 3
     TRIANGLE = 5
     QUADRILATERAL = 9
-    TETRAHEDRAL = 10
-    HEXAHEDRAL = 12
+    TETRAHEDRON = 10
+    HEXAHEDRON = 12
     PRISM = 13
     PYRAMID = 14
 
@@ -18,10 +18,11 @@ class ElementType(Enum):
 class Zone:
     izone: int
     ndime: int
-    elements: List[npt.NDArray[np.uint16]]
-    element_types: List[ElementType]
-    points: npt.NDArray[np.float64]
-    markers: Dict[str, List[npt.NDArray[np.uint16]]] = dataclasses.field(default_factory=dict)
+    elements: Sequence[npt.NDArray[np.uint16]]
+    element_types: Sequence[ElementType]
+    points: npt.NDArray[np.float32]
+    markers: dict[str, Sequence[npt.NDArray[np.uint16]]] = dataclasses.field(default_factory=dict)
+    marker_types: dict[str,Sequence[ElementType]] = dataclasses.field(default_factory=dict)
     nelem: Optional[int] = None
     npoin: Optional[int] = None
     nmark: Optional[int] = None
@@ -37,4 +38,4 @@ class Zone:
 @dataclass
 class Mesh:
     nzone: int
-    zones: List[Zone]
+    zones: Sequence[Zone]
