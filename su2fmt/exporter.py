@@ -1,7 +1,7 @@
 import numpy.typing as npt
 from typing import List
 import numpy as np
-from su2fmt.mesh import Mesh
+from su2fmt.mesh import ElementType, Mesh
 
 ELEMENT_INDENT = " " * 2
 
@@ -40,5 +40,10 @@ def export_mesh(mesh: Mesh, file_path: str):
                 file.write(f"MARKER_TAG={marker_tag}\n")
                 file.write(f"MARKER_ELEMS= {len(marker_elements)}\n")
                 for index, element in enumerate(marker_elements):
-                    element_row = [3, *element]
+                    if not len(zone.marker_types.values()):
+                        assert len(element) == 2, "marker types must be passed for non-lines, only accepting no markers for backwards compatibility"
+                        marker_type = ElementType.LINE.value
+                    else:
+                        marker_type = zone.marker_types[marker_tag][index].value
+                    element_row = [marker_type, *element]
                     file.write(f"{ELEMENT_INDENT}{spaces.join(map(str, element_row))}\n")
