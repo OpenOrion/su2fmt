@@ -89,9 +89,10 @@ def parse_mesh(file_path: str):
             elif point_index is not None and npoin:
                 assert npoin is not None, "NPOIN must be defined for zone before reading points"
                 if ndime == 2:
-                    point = np.array(line.split()[:-1]+[0], dtype=np.float32)
+                    point = np.array(line.split()[:2]+[0], dtype=np.float32)
                 else:
-                    point = np.array(line.split()[:-1], dtype=np.float32)
+                    point = np.array(line.split()[:3], dtype=np.float32)
+                assert len(point) == 3, "Point must have 3 coordinates"
                 points.append(point)
                 if point_index == npoin-1:
                     point_index = None
