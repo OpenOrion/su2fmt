@@ -16,9 +16,9 @@ def parse_mesh(file_path: str):
         npoin: Optional[int] = None
         nmark: int = 0
         points: List[npt.NDArray[np.float32]] = []
-        elements: List[npt.NDArray[np.uint16]] = []
+        elements: List[npt.NDArray[np.int64]] = []
         element_types: List[ElementType]  = []
-        markers: Dict[str, List[npt.NDArray[np.uint16]]] = {}
+        markers: Dict[str, List[npt.NDArray[np.int64]]] = {}
         marker_types: Dict[str, List[ElementType]] = {}
 
         element_index: Optional[int] = None
@@ -77,7 +77,7 @@ def parse_mesh(file_path: str):
 
             elif element_index is not None and nelem:
                 assert nelem is not None, "NELEM must be defined for zone before reading elements"
-                element = np.array(line.split()[1:-1], dtype=np.uint16)
+                element = np.array(line.split()[1:-1], dtype=np.int64)
                 element_type = ElementType(int(line.split()[0]))
                 elements.append(element)
                 element_types.append(element_type)
@@ -109,7 +109,7 @@ def parse_mesh(file_path: str):
                     marker_types[marker_tag] = []
                 marker_components = line.split()
                 markers[marker_tag].append(
-                    np.array(marker_components[1:], dtype=np.uint16)
+                    np.array(marker_components[1:], dtype=np.int64)
                 )
                 marker_types[marker_tag].append(ElementType(int(marker_components[0])))
 
