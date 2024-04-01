@@ -5,7 +5,7 @@ from su2fmt.mesh import ElementType, Mesh
 
 ELEMENT_INDENT = " " * 2
 
-def get_unused_point_indexes(points: npt.NDArray[np.float64], elements: List[npt.NDArray[np.uint16]]):
+def get_unused_point_indexes(points: npt.NDArray[np.float64], elements: List[npt.NDArray[np.int64]]):
     used_point_indexes = set()
     point_indexes = set(range(len(points)))
     for element in elements:

@@ -18,10 +18,10 @@ class ElementType(Enum):
 class Zone:
     izone: int
     ndime: int
-    elements: Sequence[npt.NDArray[np.uint16]]
+    elements: Sequence[npt.NDArray[np.int64]]
     element_types: Sequence[ElementType]
     points: npt.NDArray[np.float32]
-    markers: dict[str, Sequence[npt.NDArray[np.uint16]]] = dataclasses.field(default_factory=dict)
+    markers: dict[str, Sequence[npt.NDArray[np.int64]]] = dataclasses.field(default_factory=dict)
     marker_types: dict[str,Sequence[ElementType]] = dataclasses.field(default_factory=dict)
     nelem: Optional[int] = None
     npoin: Optional[int] = None
