@@ -32,21 +32,21 @@ def parse_mesh(file_path: str):
             line = line.strip()
 
             if line.startswith('NZONE='):
-                nzone = int(line.split('=')[1])
+                nzone = int(line.split('=')[1].strip().split()[0])
             elif line.startswith('NMARK='):
-                nmark = int(line.split('=')[1])
+                nmark = int(line.split('=')[1].strip().split()[0])
             elif line.startswith('IZONE='):
                 izone_len += 1
-                izone = int(line.split('=')[1])
+                izone = int(line.split('=')[1].strip().split()[0])
             
             elif line.startswith('NDIME='):
                 if izone_len > 1:
                     assert ndime is not None, "NDIME must be defined for zone"
                     assert nelem is not None, "NELEM must be defined for zone"
                     assert npoin is not None, "NPOIN must be defined for zone"
-                    zone = Zone(izone-1, ndime, elements, element_types, np.array(points), markers, nelem, npoin, nmark)
+                    zone = Zone(izone-1, ndime, elements, element_types, np.array(points), markers, marker_types, nelem, npoin, nmark)
                     zones.append(zone)
-                ndime = int(line.split('=')[1])
+                ndime = int(line.split('=')[1].strip().split()[0])
                 nelem = None
                 npoin = None
                 elements = []
@@ -61,18 +61,18 @@ def parse_mesh(file_path: str):
                 marker_index = None
 
             elif line.startswith('NELEM='):
-                nelem = int(line.split('=')[1])
+                nelem = int(line.split('=')[1].strip().split()[0])
                 element_index = 0
 
             elif line.startswith('NPOIN='):
-                npoin = int(line.split('=')[1])
+                npoin = int(line.split('=')[1].strip().split()[0])
                 point_index = 0
 
             elif line.startswith('MARKER_TAG='):
-                marker_tag = line.split('=')[1]
+                marker_tag = line.split('=')[1].strip()
                 
             elif line.startswith('MARKER_ELEMS='):
-                nmark_elems = int(line.split('=')[1])
+                nmark_elems = int(line.split('=')[1].strip().split()[0])
                 marker_index = 0
 
             elif element_index is not None and nelem:
