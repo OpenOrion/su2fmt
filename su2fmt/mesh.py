@@ -1,9 +1,8 @@
-from dataclasses import dataclass
-from typing import Sequence, Optional
+from typing import Optional, Dict
 import numpy as np
-import numpy.typing as npt
 from enum import Enum
-import dataclasses
+from meshly import Mesh
+from pydantic import Field
 
 class ElementType(Enum):
     LINE = 3
@@ -14,28 +13,33 @@ class ElementType(Enum):
     PRISM = 13
     PYRAMID = 14
 
-@dataclass
-class Zone:
-    izone: int
-    ndime: int
-    elements: Sequence[npt.NDArray[np.int64]]
-    element_types: Sequence[ElementType]
-    points: npt.NDArray[np.float32]
-    markers: dict[str, Sequence[npt.NDArray[np.int64]]] = dataclasses.field(default_factory=dict)
-    marker_types: dict[str,Sequence[ElementType]] = dataclasses.field(default_factory=dict)
-    nelem: Optional[int] = None
-    npoin: Optional[int] = None
-    nmark: Optional[int] = None
-
-    def __post_init__(self) -> None:
-        if self.nelem is None:
-            self.nelem = len(self.elements)
-            self.npoin = len(self.points)
-            self.nmark = len(self.markers)
-        
-            
-
-@dataclass
-class Mesh:
-    nzone: int
-    zones: Sequence[Zone]
+class SU2Mesh(Mesh):
+    """
+    A mesh class for SU2 format files, inheriting from meshly.Mesh.
+    
+    This extends the base Mesh class with SU2-specific attributes like
+    element types, markers, and zone information.
+    """
+    # SU2-specific attributes
+    element_types: np.ndarray = Field(..., description="Element types for each element")
+    markers: Dict[str, np.ndarray] = Field(default_factory=dict, description="Boundary markers")
+    marker_types: Dict[str, np.ndarray] = Field(default_factory=dict, description="Marker element types")
+    
+    # Zone information
+    izone: int = Field(1, description="Zone index")
+    ndime: int = Field(3, description="Number of dimensions from file")
+    
+    @property
+    def nelem(self) -> int:
+        """Number of elements (derived from element_types)."""
+        return len(self.element_types) if len(self.element_types) > 0 else 0
+    
+    @property
+    def npoin(self) -> int:
+        """Number of points (derived from vertices)."""
+        return len(self.vertices) if len(self.vertices) > 0 else 0
+    
+    @property
+    def nmark(self) -> int:
+        """Number of markers (derived from markers dict)."""
+        return len(self.markers)

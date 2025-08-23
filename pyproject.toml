@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "su2fmt"
+version = "3.0.0"
+description = "the open source SU2 mesh format parser and exporter"
+authors = [
+    {name = "Open Orion"}
+]
+dependencies = [
+    "numpy",
+    "meshly"
+]
+requires-python = ">=3.7"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["su2fmt*"]

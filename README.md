@@ -11,7 +11,7 @@ https://su2code.github.io/docs/Mesh-File/.
 
 # Install
 ```
-pip install git+https://github.com/Turbodesigner/su2fmt.git#egg=su2fmt
+pip install git+https://github.com/OpenOrion/su2fmt.git#egg=su2fmt
 ```
 
 # Example
@@ -26,12 +26,12 @@ mesh = parse_mesh("example.su2")
 # export mesh file
 export_mesh(mesh, "example_generated.su2")
 ```
-#### Note: `visualize_mesh` has been moved to [ezmesh](https://github.com/Turbodesigner/ezmesh)
+#### Note: `visualize_mesh` has been moved to [ezmesh](https://github.com/OpenOrion/ezmesh)
 
 
 # Devlopement Setup
 ```
-git clone https://github.com/Turbodesigner/su2fmt.git
+git clone https://github.com/OpenOrion/su2fmt.git
 cd su2fmt
 pip install -r requirements_dev.txt
 ```
