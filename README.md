@@ -26,7 +26,7 @@ mesh = parse_mesh("example.su2")
 # export mesh file
 export_mesh(mesh, "example_generated.su2")
 ```
-#### Note: `visualize_mesh` has been moved to [ezmesh](https://github.com/Turbodesigner/ezmesh)
+#### Note: `visualize_mesh` has been moved to [ezmesh](https://github.com/OpenOrion/ezmesh)
 
 
 # Devlopement Setup
