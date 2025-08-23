@@ -10,7 +10,8 @@ authors = [
     {name = "Open Orion"}
 ]
 dependencies = [
-    "numpy"
+    "numpy",
+    "meshly"
 ]
 requires-python = ">=3.7"
 
