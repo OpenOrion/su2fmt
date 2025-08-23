@@ -31,7 +31,7 @@ export_mesh(mesh, "example_generated.su2")
 
 # Devlopement Setup
 ```
-git clone https://github.com/Turbodesigner/su2fmt.git
+git clone https://github.com/OpenOrion/su2fmt.git
 cd su2fmt
 pip install -r requirements_dev.txt
 ```
