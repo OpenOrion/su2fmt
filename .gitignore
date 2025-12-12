@@ -1,3 +1,5 @@
+*.tar.gz
+*.zip
 *.cgns
 *.su2
 *.geo_unrolled

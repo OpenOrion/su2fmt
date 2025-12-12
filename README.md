@@ -26,12 +26,10 @@ mesh = parse_mesh("example.su2")
 # export mesh file
 export_mesh(mesh, "example_generated.su2")
 ```
-#### Note: `visualize_mesh` has been moved to [ezmesh](https://github.com/OpenOrion/ezmesh)
-
 
 # Devlopement Setup
 ```
 git clone https://github.com/OpenOrion/su2fmt.git
 cd su2fmt
-pip install -r requirements_dev.txt
+make install
 ```
